@@ -19,10 +19,36 @@ void cadastroLivro(int livrosCadastrados, Livro livros[],int maxLivros[]){
         printf("Quantidade: ");
         scanf("%d",&livros[livrosCadastrados].quantidade);
         maxLivros[livrosCadastrados] = livros[livrosCadastrados].quantidade;
+
+        //Usando arquivos para salvar
+        FILE* arqSaida = fopen("arquivo.txt","a");
+        fprintf(arqSaida,"%d %d %s \n",livros[livrosCadastrados].id,livros[livrosCadastrados].quantidade,livros[livrosCadastrados].nome);
+        fclose(arqSaida);
 }
 
 void consultarLivros(int livrosCadastrados, Livro livros[]){
     printf("\n");
+    FILE* arqnome = fopen("arquivo.txt","r");
+    int contador = 0;
+
+
+    if (arqnome != NULL){
+        while (fscanf(arqnome, "%d %d %[^\n]s",&livros[contador].id, &livros[contador].quantidade,livros[contador].nome) != EOF){
+            
+            printf("ID: %d \n",livros[contador].id);
+            printf("Nome: %s \n",livros[contador].nome);
+            printf("Quantidade: %d\n",livros[contador].quantidade);
+
+            printf("\n");
+
+            contador++;
+        }  
+    }
+
+    fclose(arqnome);
+    
+
+   /*
     for (int i = 0; i <= livrosCadastrados; i++) {
         printf("ID: %d \n",livros[i].id);
         printf("Nome: %s \n",livros[i].nome);
@@ -30,6 +56,7 @@ void consultarLivros(int livrosCadastrados, Livro livros[]){
 
         printf("\n");
     }
+    */
 }
 
 void retirarLivros(Livro livro[], int livrosCadastrados, int opc, int maxLivros[]){
@@ -88,10 +115,13 @@ void retirarLivros(Livro livro[], int livrosCadastrados, int opc, int maxLivros[
 int main (){
     int opc;
     //int livrosCadastrados = 1;
-    int livrosCadastrados = -1;
+    //int livrosCadastrados = -1;
+    int livrosCadastrados;
     Livro livros[10];
     int id;
     int maxLivros[10];
+
+    //ARQUIVOS
     
     //livros = (Livro *) malloc(livrosCadastrados * sizeof(Livro)); 
     
@@ -109,7 +139,18 @@ int main (){
         switch (opc){
         case 1:
             printf("\e[H\e[2J");
-            livrosCadastrados += 1;
+            //livrosCadastrados += 1;
+            //arquivo
+            FILE* arqQdtR = fopen("qtdlivros.txt","r");
+            fscanf(arqQdtR,"%d",&livrosCadastrados);
+            fclose(arqQdtR);
+            livrosCadastrados++;
+            FILE* arqQdtW = fopen("qtdlivros.txt","w");
+            fprintf(arqQdtW,"%d",livrosCadastrados);
+            fclose(arqQdtW);
+
+            
+            //arquivo
             cadastroLivro(livrosCadastrados, livros, maxLivros);
             printf("\e[H\e[2J");
             
